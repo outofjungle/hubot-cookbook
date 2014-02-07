@@ -55,16 +55,23 @@ directory '/etc/hubot' do
   recursive true
 end
 
-template '/etc/hubot/config.rb' do
-  source 'config.rb.erb'
-  mode 00600
-end
-
 directory '/var/run/hubot' do
   user node['hubot']['user']
   group node['hubot']['group']
   mode 00755
   recursive true
+end
+
+directory '/var/log/hubot' do
+  user node['hubot']['user']
+  group node['hubot']['group']
+  mode 00755
+  recursive true
+end
+
+template '/etc/hubot/config.rb' do
+  source 'config.rb.erb'
+  mode 00600
 end
 
 file '/var/log/hubot/hubot.log' do
