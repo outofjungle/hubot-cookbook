@@ -21,7 +21,7 @@ User who will run the `hubot` process
     default['hubot']['user'] = 'hubot'
     default['hubot']['group'] = 'users'
 
-`hubot` application will be unstalled in this directory
+`hubot` application will be installed in this directory
 
     default['hubot']['home'] = '/home/hubot'
 
