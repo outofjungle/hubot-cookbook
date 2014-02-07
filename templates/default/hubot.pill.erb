@@ -1,0 +1,13 @@
+eval(File.read('/etc/hubot/config.rb'), binding)
+
+Bluepill.application('hubot', :log_file => '/var/log/hubot/bluepill.log') do |app|
+  app.process('hubot') do |process|
+    process.start_command = '<%= node['hubot']['home'] %>/node_modules/hubot/bin/hubot --adapter hipchat'
+    process.working_dir = '<%= node['hubot']['home'] %>/node_modules/hubot'
+    process.pid_file = '/var/run/hubot/hubot.pid'
+    #process.stdout = process.stderr = '/var/log/hubot/hubot.log'
+    process.uid = '<%= node['hubot']['user'] %>'
+    process.gid = '<%= node['hubot']['group'] %>'
+    process.daemonize = true
+  end
+end
