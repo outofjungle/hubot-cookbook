@@ -10,9 +10,13 @@ class Chef
       actions :enable, :install
       default_action :enable
 
-      attribute :bot_name, :kind_of => String, :name_attribute => true
+      attribute :name, :kind_of => String, :name_attribute => true
       attribute :jabber_id, :kind_of => String, :required => true
       attribute :password, :kind_of => String, :required => true
+      attribute :enabled, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+      attribute :installed, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+
+      attr_accessor :enabled, :installed, :running
     end
   end
 end
@@ -51,9 +55,15 @@ class Chef
       action :enable do
         run_action(:install)
 
-        bluepill_service "#{bot_name}" do
+        bluepill_service bot_name do
           action [:enable, :load, :start]
         end
+      end
+
+      def load_current_resource
+        @current_resource = Chef::Resource::HubotHipchat.new(new_resource.name)
+        @current_resource.installed = bot_installed?
+        @current_resource
       end
 
       def bot_name
