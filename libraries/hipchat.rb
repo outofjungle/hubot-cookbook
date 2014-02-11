@@ -4,12 +4,11 @@ require_relative './helpers.rb'
 
 class Chef
   class Resource
-    class Hipchat < Chef::Resource::LWRPBase
-      self.resource_name = 'hipchat'
+    class HubotHipchat < Chef::Resource::LWRPBase
+      self.resource_name = 'hubot_hipchat'
 
       actions :enable, :install
       default_action :enable
-      state_attrs :enabled, :installed
 
       attribute :bot_name, :kind_of => String, :name_attribute => true
       attribute :jabber_id, :kind_of => String, :required => true
@@ -20,14 +19,11 @@ end
 
 class Chef
   class Provider
-    class Hipchat < Chef::Provider::LWRPBase
+    class HubotHipchat < Chef::Provider::LWRPBase
+      use_inline_resources
 
       action :install do
-        config_file = "/etc/hubot/#{bot_name}_config.rb"
-        pill_file = "/etc/bluepill/#{bot_name}.pill"
-        log_file = "/var/log/hubot/#{bot_name}.log"
-
-        template config_file do
+        template config_file(bot_name) do
           source 'config.rb.erb'
           mode 00600
           variables({
@@ -36,17 +32,17 @@ class Chef
           })
         end
 
-        file log_file do
+        file log_file(bot_name) do
           user hubot_user
           group hubot_group
           mode 00644
         end
 
-        template pill_file do
+        template pill_file(bot_name) do
           source 'hubot.pill.erb'
           mode 00644
           variables({
-            :config_file => config_file,
+            :config_file => config_file(bot_name),
             :bot_name => bot_name
           })
         end
@@ -61,7 +57,11 @@ class Chef
       end
 
       def bot_name
-        "#{Chef::Resource::Hipchat.resource_name}_#{new_resource.name}_hubot"
+        "#{Chef::Resource::HubotHipchat.resource_name}_#{new_resource.name}_hubot"
+      end
+
+      def bot_installed?
+        ::File.exists?(pill_file(bot_name))
       end
     end
   end

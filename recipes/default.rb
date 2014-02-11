@@ -69,7 +69,7 @@ directory '/var/log/hubot' do
   recursive true
 end
 
-hipchat 'secretsauce' do
+hubot_hipchat 'secretsauce' do
   jabber_id node['hipchat']['jabber_id']
   password node['hipchat']['password']
 end
