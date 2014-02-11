@@ -5,10 +5,10 @@
 
 include_recipe 'bluepill'
 
-user node['hubot']['user'] do
+user hubot_user do
   supports :manage_home => true
-  gid node['hubot']['group']
-  home node['hubot']['home']
+  gid hubot_group
+  home hubot_home
   shell '/bin/sh'
 end
 
@@ -34,20 +34,20 @@ end
 
 execute 'install hubot' do
   command 'hubot --create .'
-  cwd node['hubot']['home']
-  user node['hubot']['user']
-  group node['hubot']['group']
-  not_if { File.exist?("#{node['hubot']['home']}/bin/hubot") }
+  cwd hubot_home
+  user hubot_user
+  group hubot_group
+  not_if { File.exist?("#{hubot_home}/bin/hubot") }
 end
 
 execute 'npm install in hubot dir' do
-  command "sudo -H -u #{node['hubot']['user']} /usr/bin/npm install"
-  cwd "#{node['hubot']['home']}"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install"
+  cwd "#{hubot_home}"
 end
 
 execute 'npm install in hubot hipchat adapter' do
-  command "sudo -H -u #{node['hubot']['user']} /usr/bin/npm install --save hubot-hipchat"
-  cwd "#{node['hubot']['home']}"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --save hubot-hipchat"
+  cwd "#{hubot_home}"
 end
 
 directory '/etc/hubot' do
@@ -56,35 +56,20 @@ directory '/etc/hubot' do
 end
 
 directory '/var/run/hubot' do
-  user node['hubot']['user']
-  group node['hubot']['group']
+  user hubot_user
+  group hubot_group
   mode 00755
   recursive true
 end
 
 directory '/var/log/hubot' do
-  user node['hubot']['user']
-  group node['hubot']['group']
+  user hubot_user
+  group hubot_group
   mode 00755
   recursive true
 end
 
-template '/etc/hubot/config.rb' do
-  source 'config.rb.erb'
-  mode 00600
-end
-
-file '/var/log/hubot/hubot.log' do
-  user node['hubot']['user']
-  group node['hubot']['group']
-  mode 00644
-end
-
-template '/etc/bluepill/hubot.pill' do
-  source 'hubot.pill.erb'
-  mode 00644
-end
-
-bluepill_service 'hubot' do
-  action [:enable, :load, :start]
+hipchat 'secretsauce' do
+  jabber_id node['hipchat']['jabber_id']
+  password node['hipchat']['password']
 end
