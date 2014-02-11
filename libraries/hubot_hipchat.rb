@@ -61,16 +61,17 @@ class Chef
       end
 
       def load_current_resource
-        @current_resource = Chef::Resource::HubotHipchat.new(new_resource.name)
-
-        bluepill_resource = Chef::Resource::BluepillService.new("temp-#{bot_name}")
+        bluepill_resource = Chef::Resource::BluepillService.new(bot_name)
         bluepill_resource.service_name(bot_name)
+
         bluepill_provider = Chef::Provider::BluepillService.new(bluepill_resource, run_context)
         bluepill_provider.load_current_resource
 
+        @current_resource = Chef::Resource::HubotHipchat.new(new_resource.name)
         @current_resource.enabled = bluepill_provider.current_resource.enabled
         @current_resource.running = bluepill_provider.current_resource.running
         @current_resource.installed = bot_installed?
+
         @current_resource
       end
 
