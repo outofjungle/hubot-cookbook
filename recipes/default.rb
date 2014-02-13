@@ -79,8 +79,8 @@ directory '/var/log/hubot' do
 end
 
 hubot_hipchat 'secretsauce' do
-  jabber_id node['hipchat']['jabber_id']
-  password node['hipchat']['password']
+  jabber_id node[:hipchat][:jabber_id]
+  password node[:hipchat][:password]
 end
 
 hubot_gtalk 'secretsauce' do
