@@ -4,14 +4,14 @@ require_relative './helpers.rb'
 
 class Chef
   class Resource
-    class HubotHipchat < Chef::Resource::LWRPBase
-      self.resource_name = 'hubot_hipchat'
+    class HubotGtalk < Chef::Resource::LWRPBase
+      self.resource_name = 'hubot_gtalk'
 
       actions :enable, :install
       default_action :enable
 
       attribute :name, :kind_of => String, :name_attribute => true
-      attribute :jabber_id, :kind_of => String, :required => true
+      attribute :username, :kind_of => String, :required => true
       attribute :password, :kind_of => String, :required => true
       attribute :enabled, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
       attribute :installed, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
@@ -23,7 +23,7 @@ end
 
 class Chef
   class Provider
-    class HubotHipchat < Chef::Provider::LWRPBase
+    class HubotGtalk < Chef::Provider::LWRPBase
       use_inline_resources
 
       action :install do
@@ -31,7 +31,7 @@ class Chef
           source 'config.rb.erb'
           mode 00600
           variables({
-            :jabber_id => new_resource.jabber_id,
+            :username => new_resource.username,
             :password => new_resource.password
           })
         end
@@ -48,7 +48,7 @@ class Chef
           variables({
             :config_file => config_file(bot_name),
             :bot_name => bot_name,
-            :adapter => 'hubot'
+            :adapter => 'gtalk-gluck'
           })
         end
       end
@@ -68,7 +68,7 @@ class Chef
         bluepill_provider = Chef::Provider::BluepillService.new(bluepill_resource, run_context)
         bluepill_provider.load_current_resource
 
-        @current_resource = Chef::Resource::HubotHipchat.new(new_resource.name)
+        @current_resource = Chef::Resource::HubotGtalk.new(new_resource.name)
         @current_resource.enabled = bluepill_provider.current_resource.enabled
         @current_resource.running = bluepill_provider.current_resource.running
         @current_resource.installed = bot_installed?
@@ -77,7 +77,7 @@ class Chef
       end
 
       def bot_name
-        "#{Chef::Resource::HubotHipchat.resource_name}_#{new_resource.name}_hubot"
+        "#{Chef::Resource::HubotGtalk.resource_name}_#{new_resource.name}_hubot"
       end
 
       def bot_installed?

@@ -2,7 +2,7 @@ eval(File.read('<%= @config_file %>'), binding)
 
 Bluepill.application('<%= @bot_name %>', :log_file => '/var/log/hubot/bluepill_<%= @bot_name %>.log') do |app|
   app.process('<%= @bot_name %>') do |process|
-    process.start_command = '<%= node['hubot']['home'] %>/node_modules/hubot/bin/hubot --adapter hipchat'
+    process.start_command = '<%= node['hubot']['home'] %>/node_modules/hubot/bin/hubot --adapter <%= @adapter %>>'
     process.working_dir = '<%= node['hubot']['home'] %>/node_modules/hubot'
     process.pid_file = '/var/run/hubot/<%= @bot_name %>.pid'
     process.uid = '<%= node['hubot']['user'] %>'

@@ -50,6 +50,11 @@ execute 'npm install in hubot hipchat adapter' do
   cwd "#{hubot_home}"
 end
 
+execute 'add the gtalk adapter' do
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --save hubot-gtalk-gluck"
+  cwd "#{hubot_home}"
+end
+
 directory '/etc/hubot' do
   mode 00600
   recursive true
@@ -72,4 +77,9 @@ end
 hubot_hipchat 'secretsauce' do
   jabber_id node['hipchat']['jabber_id']
   password node['hipchat']['password']
+end
+
+hubot_gtalk 'secretsauce' do
+  username node[:gtalk][:username]
+  password node[:gtalk][:password]
 end
