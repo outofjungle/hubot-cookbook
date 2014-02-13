@@ -29,7 +29,10 @@ service 'redis' do
 end
 
 %w(inherits coffee-script hubot).each do |pkg|
-  execute "npm install -g #{pkg}"
+  execute "installing npm package #{pkg}" do
+    command "npm install -global #{pkg}"
+    not_if "npm list -global -parseable #{pkg}"
+  end
 end
 
 execute 'install hubot' do
@@ -40,13 +43,14 @@ execute 'install hubot' do
   not_if { File.exist?("#{hubot_home}/bin/hubot") }
 end
 
-execute 'npm install in hubot dir' do
+execute "installing hubot dependencies for #{hubot_user}" do
   command "sudo -H -u #{hubot_user} /usr/bin/npm install"
   cwd "#{hubot_home}"
 end
 
-execute 'npm install in hubot hipchat adapter' do
+execute "installing hipchat adapter for #{hubot_user}" do
   command "sudo -H -u #{hubot_user} /usr/bin/npm install --save hubot-hipchat"
+  not_if 'npm list -parseable hubot-hipchat'
   cwd "#{hubot_home}"
 end
 
