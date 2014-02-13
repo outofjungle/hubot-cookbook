@@ -31,7 +31,7 @@ end
 %w(inherits coffee-script hubot).each do |pkg|
   execute "installing npm package #{pkg}" do
     command "npm install -global #{pkg}"
-    not_if "npm list -global -parseable #{pkg}"
+    not_if "npm list -global -parseable #{pkg} | grep #{pkg}"
   end
 end
 
@@ -44,19 +44,18 @@ execute 'install hubot' do
 end
 
 execute "installing hubot dependencies for #{hubot_user}" do
-  command "sudo -H -u #{hubot_user} /usr/bin/npm install"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --prefix #{hubot_home}"
   cwd "#{hubot_home}"
 end
 
 execute "installing hipchat adapter for #{hubot_user}" do
-  command "sudo -H -u #{hubot_user} /usr/bin/npm install --save hubot-hipchat"
-  not_if 'npm list -parseable hubot-hipchat'
-  cwd "#{hubot_home}"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --prefix #{hubot_home} --save hubot-hipchat"
+  not_if "/usr/bin/npm list --parseable --prefix #{hubot_home} hubot-hipchat | grep hubot-hipchat"
 end
 
 execute 'add the gtalk adapter' do
-  command "sudo -H -u #{hubot_user} /usr/bin/npm install --save hubot-gtalk-gluck"
-  cwd "#{hubot_home}"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --prefix #{hubot_home} --save hubot-gtalk-gluck"
+  not_if "/usr/bin/npm list --prefix #{hubot_home} --parseable hubot-gtalk-gluck | grep hubot-gtalk-gluck"
 end
 
 directory '/etc/hubot' do
