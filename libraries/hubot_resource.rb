@@ -1,14 +1,20 @@
-require 'chef/resource/lwrp_base'
+require 'chef/resource'
 
 class Chef
   class Resource
-    class HubotResource < Chef::Resource::LWRPBase
+    class HubotResource < Chef::Resource
+      def initialize(name, run_context=nil)
+        super
+        @action = :enable
+        @allowed_actions = [:install, :enable]
+        @name = name
+      end
 
-      attribute :name, :kind_of => String, :name_attribute => true
-      attribute :enabled, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
-      attribute :installed, :kind_of => [TrueClass, FalseClass, NilClass], :default => false
+      def env(arg=nil)
+        set_or_return(:env, arg, :kind_of => [Hash])
+      end
 
-      attr_accessor :enabled, :installed, :running
+      attr_accessor :enabled, :installed, :running, :adapter
     end
   end
 end
