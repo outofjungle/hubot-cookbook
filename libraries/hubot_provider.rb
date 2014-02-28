@@ -5,6 +5,7 @@ class Chef
   class Provider
     class HubotProvider < Chef::Provider
       def action_install
+
         template config_file(bot_name) do
 
           source 'config.rb.erb'
