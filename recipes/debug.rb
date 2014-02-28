@@ -16,3 +16,13 @@ hubot_gtalk 'secretsauce' do
       'HUBOT_GTALK_PASSWORD' => node[:gtalk][:password]
   })
 end
+
+hubot_irc 'secretsauce' do
+  env ({
+      'HUBOT_IRC_SERVER' => node[:irc][:server],
+      'HUBOT_IRC_ROOMS' => node[:irc][:rooms],
+      'HUBOT_IRC_NICK' => node[:irc][:nick],
+      'HUBOT_IRC_UNFLOOD' => node[:irc][:unflood],
+      'HUBOT_IRC_DEBUG' => "true"
+  })
+end

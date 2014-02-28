@@ -1,0 +1,2 @@
+define :bootstrap do
+end

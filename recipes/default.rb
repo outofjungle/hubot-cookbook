@@ -20,9 +20,14 @@ end
 rpm_package '/tmp/epel-release-6-8.noarch.rpm'
 package 'nodejs'
 package 'npm'
+package 'git'
 package 'redis'
 package 'expat-devel'
 package 'libicu-devel'
+
+execute 'remove self-signed CA' do
+  command "sudo -H -u #{hubot_user} /usr/bin/npm config set ca ''"
+end
 
 service 'redis' do
   action [:start, :enable]
@@ -56,6 +61,12 @@ end
 execute 'add the gtalk adapter' do
   command "sudo -H -u #{hubot_user} /usr/bin/npm install --prefix #{hubot_home} --save hubot-gtalk-gluck"
   not_if "/usr/bin/npm list --prefix #{hubot_home} --parseable hubot-gtalk-gluck | grep hubot-gtalk-gluck"
+end
+
+execute 'add the irc adapter' do
+  plugin = "hubot-irc"
+  command "sudo -H -u #{hubot_user} /usr/bin/npm install --prefix #{hubot_home} --save #{plugin}"
+  not_if "/usr/bin/npm list --prefix #{hubot_home} --parseable #{plugin} | grep #{plugin}"
 end
 
 directory '/etc/hubot' do

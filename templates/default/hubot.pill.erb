@@ -5,6 +5,7 @@ Bluepill.application('<%= @bot_name %>', :log_file => '/var/log/hubot/bluepill_<
     process.start_command = '<%= node['hubot']['home'] %>/node_modules/hubot/bin/hubot --adapter <%= @adapter %>'
     process.working_dir = '<%= node['hubot']['home'] %>/node_modules/hubot'
     process.pid_file = '/var/run/hubot/<%= @bot_name %>.pid'
+    process.stdout = process.stderr = '<%= log_file(@bot_name) %>'
     process.uid = '<%= node['hubot']['user'] %>'
     process.gid = '<%= node['hubot']['group'] %>'
     process.daemonize = true
